@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Children, useEffect, useState } from 'react';
 
 import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
@@ -10,11 +10,51 @@ import 'tippy.js/dist/tippy.css'; // optional
 
 //fontawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleXmark, faMagnifyingGlass, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import {
+    faCircleQuestion,
+    faCircleXmark,
+    faEarthAsia,
+    faEllipsisVertical,
+    faKeyboard,
+    faMagnifyingGlass,
+    faSpinner,
+} from '@fortawesome/free-solid-svg-icons';
 import AccountItem from '~/components/AccountItem';
 import Button from '~/components/Button';
+import Menu from '~/components/Popper/Menu';
 
 const cx = classNames.bind(styles);
+
+const MENU_ITEMS = [
+    {
+        icon: <FontAwesomeIcon icon={faEarthAsia} />,
+        title: 'English',
+        children: {
+            title: 'Language',
+            data: [
+                {
+                    type : 'language',
+                    code: 'en',
+                    title: 'English',
+                },
+                {
+                    type : 'language',
+                    code: 'vi',
+                    title: 'Tiếng Việt',
+                },
+            ],
+        },
+    },
+    {
+        icon: <FontAwesomeIcon icon={faCircleQuestion} />,
+        title: 'Feedback and help',
+        to: '/feedback',
+    },
+    {
+        icon: <FontAwesomeIcon icon={faKeyboard} />,
+        title: 'Keyboard shortcuts',
+    },
+];
 
 function Header() {
     const [searchResult, setSearchResult] = useState([]);
@@ -24,6 +64,18 @@ function Header() {
             setSearchResult([]);
         }, 0);
     }, []);
+
+    //Hangle logic
+    const handleMenuChange = (menuItem) => {
+        switch (menuItem.type) {
+            case 'language' :
+            //Hangle change language
+            break;
+
+            default :
+
+        }
+    }
 
     return (
         <header className={cx('wrapper')}>
@@ -36,9 +88,7 @@ function Header() {
                     render={(attrs) => (
                         <div className={cx('search-result')} tabIndex="-1" {...attrs}>
                             <PopperWrapper>
-                                <h4 className={cx('search-title')}>
-                                    Accounts
-                                </h4>
+                                <h4 className={cx('search-title')}>Accounts</h4>
                                 <AccountItem />
                                 <AccountItem />
                                 <AccountItem />
@@ -61,10 +111,15 @@ function Header() {
                 </Tippy>
 
                 <div className={cx('actions')}>
-                <div className={cx('actions')}>
-                    <Button text>Upload</Button>
-                    <Button primary>Log in</Button>
-                </div>
+                    <div className={cx('actions')}>
+                        <Button text>Upload</Button>
+                        <Button primary>Log in</Button>
+                        <Menu items={MENU_ITEMS} onChange = {handleMenuChange} >
+                            <button className={cx('more-btn')}>
+                                <FontAwesomeIcon icon={faEllipsisVertical} />
+                            </button>
+                        </Menu>
+                    </div>
                 </div>
             </div>
         </header>
