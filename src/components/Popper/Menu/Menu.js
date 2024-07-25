@@ -8,7 +8,7 @@ import { useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-const defaultFn = () => {}
+const defaultFn = () => {};
 
 function Menu({ children, items = [], hideOnClick = false, onChange = defaultFn }) {
     const [history, setHistory] = useState([{ data: items }]);
@@ -27,13 +27,38 @@ function Menu({ children, items = [], hideOnClick = false, onChange = defaultFn 
                         if (isParent) {
                             //nếu MenuItem nào là cha thì click ra cấp con
                             setHistory((prev) => [...prev, item.children]);
-                        } else{
-                            onChange(item)
+                        } else {
+                            onChange(item);
                         }
                     }}
                 />
             );
         });
+    };
+
+    const handleBack = () => {
+        setHistory((prev) => prev.slice(0, prev.length - 1)); // cắt từ ptu 0 -> gần cuối
+        // xóa bỏ phần tử cuối => trừ 1 cấp
+    }
+
+    const renderResult = (attrs) => (
+        <div className={cx('menu-list')} tabIndex="-1" {...attrs}>
+            <PopperWrapper className={cx('menu-popper')}>
+                {/* khi mà nó có từ 2 cái item trong [{ data: items }] => ko ở trang nhất hiện title */}
+                {history.length > 1 && (
+                    <Header
+                        title={'Language'}
+                        onBack={handleBack}
+                    />
+                )}
+                <div className={cx('menu-body')}>{renderItems()}</div>
+            </PopperWrapper>
+        </div>
+    );
+
+    //Reset to first page
+    const handleResetMenu = () => {
+        setHistory((prev) => prev.slice(0, 1));
     };
 
     return (
@@ -43,25 +68,8 @@ function Menu({ children, items = [], hideOnClick = false, onChange = defaultFn 
             delay={[0, 700]}
             hideOnClick={hideOnClick}
             placement="bottom-end"
-            render={(attrs) => (
-                <div className={cx('menu-list')} tabIndex="-1" {...attrs}>
-                    <PopperWrapper className={cx('menu-popper')}>
-                        {/* khi mà nó có từ 2 cái item trong [{ data: items }] => ko ở trang nhất hiện title */}
-                        {history.length > 1 && (
-                            <Header
-                                title={'Language'}
-                                onBack={() => {
-                                    setHistory((prev) => prev.slice(0, prev.length - 1)); // cắt từ ptu 0 -> gần cuối
-                                    // xóa bỏ phần tử cuối => trừ 1 cấp
-
-                                }}
-                            />
-                        )}
-                        <div className={cx('menu-body')}>{renderItems()}</div>
-                    </PopperWrapper>
-                </div>
-            )}
-            onHide={() => setHistory((prev => prev.slice(0, 1)))}
+            render={renderResult}
+            onHide={handleResetMenu} //di chuyển về trag đầu tiên
         >
             {children}
         </Tippy>

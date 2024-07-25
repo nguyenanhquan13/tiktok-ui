@@ -20,16 +20,16 @@ const cx = classNames.bind(styles);
 function Search() {
     const [searchValue, setSearchValue] = useState('');
     const [searchResult, setSearchResult] = useState([]);
-    const [showResult, setShowResult] = useState(true);
+    const [showResult, setShowResult] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const inputRef = useRef();
 
-    const debounced = useDebounce(searchValue, 800); //value(state) đc delay
-    //khi nguoi dung ngừng gõ 500ms => khi đó giá trị debounced mới đc update = giá trị mới nhất của searchValue
+    const debouncedValue = useDebounce(searchValue, 800); //value(state) đc delay
+    //khi nguoi dung ngừng gõ 500ms => khi đó giá trị debouncedValue mới đc update = giá trị mới nhất của searchValue
 
     useEffect(() => {
-        if (!debounced.trim()) {
+        if (!debouncedValue.trim()) {
             setSearchResult([]);
             return;
         }
@@ -39,7 +39,7 @@ function Search() {
         const fetchApi = async () => {
             setLoading(true);
 
-            const result = await searchService.search(debounced);
+            const result = await searchService.search(debouncedValue);
             setSearchResult(result);
 
             setLoading(false);
@@ -47,8 +47,8 @@ function Search() {
 
         fetchApi();
 
-        //?q=${encodeURIComponent(debounced)}&type=less
-    }, [debounced]);
+        //?q=${encodeURIComponent(debouncedValue)}&type=less
+    }, [debouncedValue]);
 
     const handleClear = () => {
         setSearchValue('');
