@@ -41,6 +41,7 @@ function Menu({ children, items = [], hideOnClick = false, onChange = defaultFn 
         // xóa bỏ phần tử cuối => trừ 1 cấp
     }
 
+    //attrs là prop
     const renderResult = (attrs) => (
         <div className={cx('menu-list')} tabIndex="-1" {...attrs}>
             <PopperWrapper className={cx('menu-popper')}>

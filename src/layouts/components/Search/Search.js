@@ -7,11 +7,9 @@ import { Wrapper as PopperWrapper } from '~/components/Popper';
 import HeadlessTippy from '@tippyjs/react/headless';
 import 'tippy.js/dist/tippy.css'; // optional
 
-//fontawesome
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleXmark, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import SvgIcon from '~/components/Svgicon';
+import { iconClose, iconLoading, iconSearch } from '~/components/Svgicon/iconsRepo';
 import AccountItem from '~/components/AccountItem';
-import { SearchIcon } from '~/components/Icon';
 import { useDebounce } from '~/hooks';
 import * as searchService from '~/services/searchService';
 
@@ -68,7 +66,7 @@ function Search() {
     };
 
     return (
-        //Using a wrapper <div> or <span> tag around the reference element solves 
+        //Using a wrapper <div> or <span> tag around the reference element solves
         //this by creating a new parentNode context.
         <div>
             <HeadlessTippy
@@ -98,16 +96,28 @@ function Search() {
                         }
                         onFocus={() => setShowResult(true)}
                     />
-                    {!!searchValue &&
-                        !loading && ( //khi có searchValue mới hiển thị btn
-                            <button className={cx('clear')} onClick={handleClear}>
-                                <FontAwesomeIcon icon={faCircleXmark} />
-                            </button>
+                    <div className={cx('search-icon-wrapper')}>
+                        {loading && (
+                            <span className={cx('loading', 'lh0')}>
+                                <SvgIcon icon={iconLoading} />
+                            </span>
                         )}
-                    {loading && <FontAwesomeIcon className={cx('loading')} icon={faSpinner} />}
+                        {loading || (
+                            <span className={cx('clear-btn', 'lh0')} onClick={handleClear}>
+                                <SvgIcon icon={iconClose} />
+                            </span>
+                        )}
+                    </div>
 
-                    <button className={cx('search-btn')} onMouseDown={(e) => e.preventDefault()}>
-                        <SearchIcon />
+                    {/* Search btn */}
+                    <button
+                        type="submit"
+                        className={cx('search-btn', 'lh0')}
+                        onMouseDown={(e) => {
+                            e.preventDefault();
+                        }}
+                    >
+                        <SvgIcon icon={iconSearch} size={24} />
                     </button>
                 </div>
             </HeadlessTippy>
